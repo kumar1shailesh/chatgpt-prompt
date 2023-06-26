@@ -1,0 +1,58 @@
+write a python program which can read json file with utf-8 encoding
+
+create a for loop which has a range of len(log>entries) and
+
+try to find all the keys inside log>entries>range value>response>content>text who has "users" in its value and append its index number into a list otherwise skip
+
+Now loop through all index number which was appended go to log>entries> index number>response>content>text and load it as json
+
+Now create a loop through key named as users and append all key values named as username, full_name, is_private, is verified and profile_pic_url in different lists then convert them into data frame
+
+
+CODE : 
+
+import json
+import pandas as pd
+
+# Read JSON file with UTF-8 encoding
+with open('data.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
+
+# Initialize lists to store extracted data
+usernames = []
+full_names = []
+is_private_list = []
+is_verified_list = []
+profile_pic_urls = []
+
+# Iterate over log entries
+for i in range(len(data['log']['entries'])):
+    entry = data['log']['entries'][i]
+
+    # Check if 'users' is in the value of 'text' key
+    if 'users' in entry['response']['content']['text']:
+        # Append the index number to the list
+        index = i
+
+        # Load the 'text' value as JSON
+        json_data = json.loads(entry['response']['content']['text'])
+
+        # Iterate over 'users' keys
+        for user in json_data['users']:
+            usernames.append(user['username'])
+            full_names.append(user['full_name'])
+            is_private_list.append(user['is_private'])
+            is_verified_list.append(user['is_verified'])
+            profile_pic_urls.append(user['profile_pic_url'])
+
+# Create a DataFrame from the extracted data
+df = pd.DataFrame({
+    'Username': usernames,
+    'Full Name': full_names,
+    'Is Private': is_private_list,
+    'Is Verified': is_verified_list,
+    'Profile Pic URL': profile_pic_urls
+})
+
+# Print the DataFrame
+print(df)
